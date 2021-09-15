@@ -5,4 +5,6 @@
 kubectl apply -f configs/www-vault-agent-colin-testing.yaml
 
 echo ""
-echo "Open https://$(minikube ip):32443 in your browser"
+echo "Finding minikube service URL..."
+echo "Remember the service is https://"
+minikube service --url vault-agent-colin-testing

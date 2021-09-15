@@ -30,7 +30,7 @@ export SA_JWT_TOKEN=$(kubectl get secret $VAULT_SA_NAME \
     -o jsonpath="{.data.token}" | base64 --decode; echo)
 export SA_CA_CRT=$(kubectl get secret $VAULT_SA_NAME \
     -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo)
-export MINIKUBE_HOST="$(minikube ip)"
+export MINIKUBE_HOST="$(kubectl config view --raw --minify --flatten --output='jsonpath={.clusters[].cluster.server}')"
 
 # Enable the Kubernetes Authentication Method
 vault auth enable kubernetes
@@ -39,7 +39,7 @@ vault auth enable kubernetes
 vault write auth/kubernetes/config \
   issuer="https://kubernetes.default.svc.cluster.local" \
   token_reviewer_jwt="$SA_JWT_TOKEN" \
-  kubernetes_host="https://$MINIKUBE_HOST:8443" \
+  kubernetes_host="${MINIKUBE_HOST}" \
   kubernetes_ca_cert="${SA_CA_CRT}"
 
 # Configure roles for both vault-agent and cert-manager
